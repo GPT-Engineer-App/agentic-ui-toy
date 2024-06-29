@@ -47,7 +47,7 @@ const Index = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 relative">
       <h1 className="text-3xl text-center mb-4">Manage AI Agents</h1>
       <div className="mb-4">
         <Label htmlFor="agent-prompt">New Agent Prompt</Label>
@@ -119,6 +119,12 @@ const Index = () => {
           </Card>
         ))}
       </div>
+      <Button
+        onClick={addAgent}
+        className="fixed bottom-4 right-4 rounded-full bg-blue-500 text-white p-4 shadow-lg hover:bg-blue-600"
+      >
+        <Plus className="w-6 h-6" />
+      </Button>
     </div>
   );
 };
