@@ -118,7 +118,8 @@ const Index = () => {
                   <TooltipTrigger>
                     <Button variant="outline">
                       <Edit className="mr-2" /> Edit
-                    </TooltipTrigger>
+                    </Button>
+                  </TooltipTrigger>
                   <TooltipContent>Edit this agent</TooltipContent>
                 </Tooltip>
                 <Tooltip>
