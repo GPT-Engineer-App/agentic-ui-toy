@@ -103,9 +103,9 @@ const Index = () => {
       </div>
       <Separator className="my-4" />
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="agents">
+        <Droppable droppableId="agents" direction="horizontal">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
+            <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap">
               {agents.map((agent, index) => (
                 <Draggable key={index} draggableId={String(index)} index={index}>
                   {(provided) => (
@@ -113,6 +113,7 @@ const Index = () => {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
+                      className="m-2"
                     >
                       <Card className="mb-4">
                         <CardHeader>
