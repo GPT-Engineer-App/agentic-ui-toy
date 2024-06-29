@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Trash, Edit, Move, Plus } from "lucide-react";
+import { Trash, Edit, Move, Plus, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/components/ThemeContext";
 
 const agentTemplates = [
   "Help decide on how to approach homework",
@@ -19,6 +20,7 @@ const Index = () => {
   const [agents, setAgents] = useState([]);
   const [newAgentPrompt, setNewAgentPrompt] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("");
+  const { theme, toggleTheme } = useTheme();
 
   const addAgent = () => {
     const prompt = newAgentPrompt.trim() || selectedTemplate;
@@ -50,7 +52,13 @@ const Index = () => {
 
   return (
     <div className="p-4 relative">
-      <h1 className="text-3xl text-center mb-4">Manage AI Agents</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl">Manage AI Agents</h1>
+        <Button onClick={toggleTheme} variant="outline">
+          {theme === "light" ? <Moon className="mr-2" /> : <Sun className="mr-2" />}
+          {theme === "light" ? "Dark Mode" : "Light Mode"}
+        </Button>
+      </div>
       <div className="mb-4">
         <Label htmlFor="agent-prompt">New Agent Prompt</Label>
         <Textarea
