@@ -69,14 +69,14 @@ const Index = () => {
         <h1 className="text-3xl">Manage AI Agents</h1>
         <div className="flex space-x-2">
           <Button onClick={toggleTheme} variant="outline">
-            {theme === "light" ? <Moon className="mr-2" /> : <Sun className="mr-2" />}
+            {theme === "light" ? <Moon className="mr-1 w-4 h-4" /> : <Sun className="mr-1 w-4 h-4" />}
             {theme === "light" ? "Dark Mode" : "Light Mode"}
           </Button>
           <Button
             onClick={addAgent}
             className="rounded-full bg-blue-500 text-white p-4 shadow-lg hover:bg-blue-600"
           >
-            <Plus className="w-6 h-6" />
+            <Plus className="w-4 h-4" />
           </Button>
         </div>
       </div>
@@ -122,7 +122,7 @@ const Index = () => {
                           <CardHeader>
                             <CardTitle>
                               {agent.name}
-                              <Badge className="ml-2">{index + 1}</Badge> {/* Add order pill */}
+                              <Badge className="ml-2 text-xs px-2 py-1">{index + 1}</Badge> {/* Add order pill */}
                             </CardTitle>
                           </CardHeader>
                           <CardContent>
@@ -137,7 +137,7 @@ const Index = () => {
                               <Tooltip>
                                 <TooltipTrigger>
                                   <Button variant="outline" onClick={() => deleteAgent(index)}>
-                                    <Trash className="mr-2" /> Delete
+                                    <Trash className="mr-1 w-4 h-4" /> Delete
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>Delete this agent</TooltipContent>
@@ -145,7 +145,7 @@ const Index = () => {
                               <Tooltip>
                                 <TooltipTrigger>
                                   <Button variant="outline">
-                                    <Edit className="mr-2" /> Edit
+                                    <Edit className="mr-1 w-4 h-4" /> Edit
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>Edit this agent</TooltipContent>
