@@ -66,10 +66,18 @@ const Index = () => {
     <Container className="max-w-[812px] mx-auto p-4 relative">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl">Manage AI Agents</h1>
-        <Button onClick={toggleTheme} variant="outline">
-          {theme === "light" ? <Moon className="mr-2" /> : <Sun className="mr-2" />}
-          {theme === "light" ? "Dark Mode" : "Light Mode"}
-        </Button>
+        <div className="flex space-x-2">
+          <Button onClick={toggleTheme} variant="outline">
+            {theme === "light" ? <Moon className="mr-2" /> : <Sun className="mr-2" />}
+            {theme === "light" ? "Dark Mode" : "Light Mode"}
+          </Button>
+          <Button
+            onClick={addAgent}
+            className="rounded-full bg-blue-500 text-white p-4 shadow-lg hover:bg-blue-600"
+          >
+            <Plus className="w-6 h-6" />
+          </Button>
+        </div>
       </div>
       <div className="mb-4">
         <Label htmlFor="agent-prompt">New Agent Prompt</Label>
@@ -147,12 +155,6 @@ const Index = () => {
           )}
         </Droppable>
       </DragDropContext>
-      <Button
-        onClick={addAgent}
-        className="fixed bottom-4 right-4 rounded-full bg-blue-500 text-white p-4 shadow-lg hover:bg-blue-600"
-      >
-        <Plus className="w-6 h-6" />
-      </Button>
     </Container>
   );
 };
