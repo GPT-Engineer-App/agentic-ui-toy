@@ -63,7 +63,7 @@ const Index = () => {
   };
 
   return (
-    <Container className="p-4 relative">
+    <Container className="max-w-[812px] mx-auto p-4 relative">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl">Manage AI Agents</h1>
         <Button onClick={toggleTheme} variant="outline">
