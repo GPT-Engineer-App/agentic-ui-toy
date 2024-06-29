@@ -105,7 +105,7 @@ const Index = () => {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="agents" direction="horizontal">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap">
+            <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-3 gap-4">
               {agents.map((agent, index) => (
                 <Draggable key={index} draggableId={String(index)} index={index}>
                   {(provided) => (
