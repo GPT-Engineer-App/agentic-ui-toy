@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -104,56 +104,59 @@ const Index = () => {
       <Separator className="my-4" />
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="agents" direction="horizontal">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-3 gap-4">
-              {agents.map((agent, index) => (
-                <Draggable key={index} draggableId={String(index)} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="m-2"
-                    >
-                      <Card className="mb-4">
-                        <CardHeader>
-                          <CardTitle>{agent.name}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <Textarea
-                            value={agent.prompt}
-                            onChange={(e) => editAgent(index, e.target.value)}
-                            className="mb-2"
-                          />
-                        </CardContent>
-                        <CardFooter className="flex justify-between">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Button variant="outline" onClick={() => deleteAgent(index)}>
-                                  <Trash className="mr-2" /> Delete
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Delete this agent</TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Button variant="outline">
-                                  <Edit className="mr-2" /> Edit
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Edit this agent</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </CardFooter>
-                      </Card>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
+          {(provided) => {
+            const memoizedPlaceholder = useMemo(() => provided.placeholder, [provided.placeholder]);
+            return (
+              <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-3 gap-4">
+                {agents.map((agent, index) => (
+                  <Draggable key={index} draggableId={String(index)} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="m-2"
+                      >
+                        <Card className="mb-4">
+                          <CardHeader>
+                            <CardTitle>{agent.name}</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <Textarea
+                              value={agent.prompt}
+                              onChange={(e) => editAgent(index, e.target.value)}
+                              className="mb-2"
+                            />
+                          </CardContent>
+                          <CardFooter className="flex justify-between">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Button variant="outline" onClick={() => deleteAgent(index)}>
+                                    <Trash className="mr-2" /> Delete
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Delete this agent</TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Button variant="outline">
+                                    <Edit className="mr-2" /> Edit
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Edit this agent</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </CardFooter>
+                        </Card>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {memoizedPlaceholder}
+              </div>
+            );
+          }}
         </Droppable>
       </DragDropContext>
     </Container>
