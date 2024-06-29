@@ -7,9 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Trash, Edit, Move, Plus, Sun, Moon } from "lucide-react";
+import { Trash, Edit, Plus, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/ThemeContext";
 import Container from "@/components/ui/container";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const agentTemplates = [
   "Help decide on how to approach homework",
@@ -53,11 +54,12 @@ const Index = () => {
     setAgents(updatedAgents);
   };
 
-  const reorderAgents = (startIndex, endIndex) => {
-    const result = Array.from(agents);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    setAgents(result);
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const reorderedAgents = Array.from(agents);
+    const [removed] = reorderedAgents.splice(result.source.index, 1);
+    reorderedAgents.splice(result.destination.index, 0, removed);
+    setAgents(reorderedAgents);
   };
 
   return (
@@ -92,50 +94,59 @@ const Index = () => {
         </Select>
       </div>
       <Separator className="my-4" />
-      <div>
-        {agents.map((agent, index) => (
-          <Card key={index} className="mb-4">
-            <CardHeader>
-              <CardTitle>{agent.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={agent.prompt}
-                onChange={(e) => editAgent(index, e.target.value)}
-                className="mb-2"
-              />
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button variant="outline" onClick={() => deleteAgent(index)}>
-                      <Trash className="mr-2" /> Delete
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete this agent</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button variant="outline">
-                      <Edit className="mr-2" /> Edit
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit this agent</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button variant="outline">
-                      <Move className="mr-2" /> Reorder
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Reorder this agent</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="agents">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {agents.map((agent, index) => (
+                <Draggable key={index} draggableId={String(index)} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <Card className="mb-4">
+                        <CardHeader>
+                          <CardTitle>{agent.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <Textarea
+                            value={agent.prompt}
+                            onChange={(e) => editAgent(index, e.target.value)}
+                            className="mb-2"
+                          />
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Button variant="outline" onClick={() => deleteAgent(index)}>
+                                  <Trash className="mr-2" /> Delete
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Delete this agent</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Button variant="outline">
+                                  <Edit className="mr-2" /> Edit
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Edit this agent</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </CardFooter>
+                      </Card>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
       <Button
         onClick={addAgent}
         className="fixed bottom-4 right-4 rounded-full bg-blue-500 text-white p-4 shadow-lg hover:bg-blue-600"
