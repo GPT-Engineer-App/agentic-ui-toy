@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -11,8 +11,9 @@ import { Trash, Edit, Plus, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/ThemeContext";
 import Container from "@/components/ui/container";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Badge } from "@/components/ui/badge"; // Import Badge component
-import ReactFlow, { MiniMap, Controls, Background, addEdge, Handle } from 'react-flow-renderer';
+import { Badge } from "@/components/ui/badge";
+import ReactFlow, { MiniMap, Controls, Background, addEdge, Handle, useNodesState, useEdgesState } from 'reactflow';
+import 'reactflow/dist/style.css';
 
 const agentTemplates = [
   "Help decide on how to approach homework",
@@ -33,16 +34,17 @@ const Index = () => {
   const [newAgentPrompt, setNewAgentPrompt] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const { theme, toggleTheme } = useTheme();
-  const [elements, setElements] = useState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const addAgent = () => {
     const prompt = newAgentPrompt.trim() || selectedTemplate || agentTemplates[Math.floor(Math.random() * agentTemplates.length)];
     const name = randomNames[Math.floor(Math.random() * randomNames.length)];
     if (prompt) {
-      const newAgent = { id: `${agents.length}`, data: { label: name }, position: { x: Math.random() * 250, y: Math.random() * 250 } };
+      const newAgent = { id: `${nodes.length}`, data: { label: name }, position: { x: Math.random() * 250, y: Math.random() * 250 } };
       setAgents([...agents, { name, prompt }]);
-      setElements((els) => [...els, newAgent]);
+      setNodes((nds) => [...nds, newAgent]);
       setNewAgentPrompt("");
       setSelectedTemplate("");
     }
@@ -51,7 +53,7 @@ const Index = () => {
   const deleteAgent = (index) => {
     const updatedAgents = agents.filter((_, i) => i !== index);
     setAgents(updatedAgents);
-    setElements((els) => els.filter((el) => el.id !== `${index}`));
+    setNodes((nds) => nds.filter((node) => node.id !== `${index}`));
   };
 
   const editAgent = (index, newPrompt) => {
@@ -66,10 +68,10 @@ const Index = () => {
     const reorderedAgents = Array.from(agents);
     const [removed] = reorderedAgents.splice(result.source.index, 1);
     reorderedAgents.splice(result.destination.index, 0, removed);
-    setAgents(reorderedAgents.map((agent, index) => ({ ...agent, order: index + 1 }))); // Update order
+    setAgents(reorderedAgents.map((agent, index) => ({ ...agent, order: index + 1 })));
   };
 
-  const onConnect = (params) => setElements((els) => addEdge(params, els));
+  const onConnect = (params) => setEdges((els) => addEdge(params, els));
 
   return (
     <Container className="max-w-[812px] mx-auto p-4 relative">
@@ -130,7 +132,7 @@ const Index = () => {
                           <CardHeader>
                             <CardTitle>
                               {agent.name}
-                              <Badge className="ml-2 text-xs px-2 py-1">{index + 1}</Badge> {/* Add order pill */}
+                              <Badge className="ml-2 text-xs px-2 py-1">{index + 1}</Badge>
                             </CardTitle>
                           </CardHeader>
                           <CardContent>
@@ -173,7 +175,10 @@ const Index = () => {
       </DragDropContext>
       <div style={{ height: 500 }}>
         <ReactFlow
-          elements={elements}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onLoad={setReactFlowInstance}
           style={{ width: '100%', height: '100%' }}
