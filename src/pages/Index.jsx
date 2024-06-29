@@ -11,6 +11,7 @@ import { Trash, Edit, Plus, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/ThemeContext";
 import Container from "@/components/ui/container";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Badge } from "@/components/ui/badge"; // Import Badge component
 
 const agentTemplates = [
   "Help decide on how to approach homework",
@@ -59,7 +60,7 @@ const Index = () => {
     const reorderedAgents = Array.from(agents);
     const [removed] = reorderedAgents.splice(result.source.index, 1);
     reorderedAgents.splice(result.destination.index, 0, removed);
-    setAgents(reorderedAgents);
+    setAgents(reorderedAgents.map((agent, index) => ({ ...agent, order: index + 1 }))); // Update order
   };
 
   return (
@@ -119,7 +120,10 @@ const Index = () => {
                       >
                         <Card className="mb-4">
                           <CardHeader>
-                            <CardTitle>{agent.name}</CardTitle>
+                            <CardTitle>
+                              {agent.name}
+                              <Badge className="ml-2">{index + 1}</Badge> {/* Add order pill */}
+                            </CardTitle>
                           </CardHeader>
                           <CardContent>
                             <Textarea
