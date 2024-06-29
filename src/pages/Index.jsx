@@ -21,9 +21,11 @@ const Index = () => {
   const [selectedTemplate, setSelectedTemplate] = useState("");
 
   const addAgent = () => {
-    if (newAgentPrompt.trim()) {
-      setAgents([...agents, { prompt: newAgentPrompt }]);
+    const prompt = newAgentPrompt.trim() || selectedTemplate;
+    if (prompt) {
+      setAgents([...agents, { prompt }]);
       setNewAgentPrompt("");
+      setSelectedTemplate("");
     }
   };
 
