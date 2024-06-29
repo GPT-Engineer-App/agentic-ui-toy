@@ -1,25 +1,14 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Trash, Edit, Plus, Sun, Moon } from "lucide-react";
+import { Sun, Moon, Plus } from "lucide-react";
 import { useTheme } from "@/components/ThemeContext";
 import Container from "@/components/ui/container";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Badge } from "@/components/ui/badge";
-import ReactFlow, { MiniMap, Controls, Background, addEdge, Handle, useNodesState, useEdgesState } from 'reactflow';
+import ReactFlow, { MiniMap, Controls, Background, addEdge, useNodesState, useEdgesState } from 'reactflow';
 import 'reactflow/dist/style.css';
-
-const agentTemplates = [
-  "Help decide on how to approach homework",
-  "Provide a summary of a document",
-  "Generate a creative story",
-];
 
 const randomNames = [
   "Agent Alpha",
@@ -30,45 +19,15 @@ const randomNames = [
 ];
 
 const Index = () => {
-  const [agents, setAgents] = useState([]);
-  const [newAgentPrompt, setNewAgentPrompt] = useState("");
-  const [selectedTemplate, setSelectedTemplate] = useState("");
   const { theme, toggleTheme } = useTheme();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const addAgent = () => {
-    const prompt = newAgentPrompt.trim() || selectedTemplate || agentTemplates[Math.floor(Math.random() * agentTemplates.length)];
     const name = randomNames[Math.floor(Math.random() * randomNames.length)];
-    if (prompt) {
-      const newAgent = { id: `${nodes.length}`, data: { label: name }, position: { x: Math.random() * 250, y: Math.random() * 250 } };
-      setAgents([...agents, { name, prompt }]);
-      setNodes((nds) => [...nds, newAgent]);
-      setNewAgentPrompt("");
-      setSelectedTemplate("");
-    }
-  };
-
-  const deleteAgent = (index) => {
-    const updatedAgents = agents.filter((_, i) => i !== index);
-    setAgents(updatedAgents);
-    setNodes((nds) => nds.filter((node) => node.id !== `${index}`));
-  };
-
-  const editAgent = (index, newPrompt) => {
-    const updatedAgents = agents.map((agent, i) =>
-      i === index ? { ...agent, prompt: newPrompt } : agent
-    );
-    setAgents(updatedAgents);
-  };
-
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const reorderedAgents = Array.from(agents);
-    const [removed] = reorderedAgents.splice(result.source.index, 1);
-    reorderedAgents.splice(result.destination.index, 0, removed);
-    setAgents(reorderedAgents.map((agent, index) => ({ ...agent, order: index + 1 })));
+    const newAgent = { id: `${nodes.length}`, data: { label: name }, position: { x: Math.random() * 250, y: Math.random() * 250 } };
+    setNodes((nds) => [...nds, newAgent]);
   };
 
   const onConnect = (params) => setEdges((els) => addEdge(params, els));
@@ -90,89 +49,6 @@ const Index = () => {
           </Button>
         </div>
       </div>
-      <div className="mb-4">
-        <Label htmlFor="agent-prompt">New Agent Prompt</Label>
-        <Textarea
-          id="agent-prompt"
-          value={newAgentPrompt}
-          onChange={(e) => setNewAgentPrompt(e.target.value)}
-          placeholder="Enter agent prompt here..."
-          className="mb-2"
-        />
-        <Select onValueChange={setSelectedTemplate}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a template..." />
-          </SelectTrigger>
-          <SelectContent>
-            {agentTemplates.map((template, index) => (
-              <SelectItem key={index} value={template}>
-                {template}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <Separator className="my-4" />
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="agents" direction="horizontal">
-          {(provided) => {
-            const memoizedPlaceholder = useMemo(() => provided.placeholder, [provided.placeholder]);
-            return (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap gap-4">
-                {agents.map((agent, index) => (
-                  <Draggable key={index} draggableId={String(index)} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="m-2"
-                      >
-                        <Card className="mb-4">
-                          <CardHeader>
-                            <CardTitle>
-                              {agent.name}
-                              <Badge className="ml-2 text-xs px-2 py-1">{index + 1}</Badge>
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <Textarea
-                              value={agent.prompt}
-                              onChange={(e) => editAgent(index, e.target.value)}
-                              className="mb-2"
-                            />
-                          </CardContent>
-                          <CardFooter className="flex justify-between">
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Button variant="outline" onClick={() => deleteAgent(index)}>
-                                    <Trash className="mr-1 w-4 h-4" /> Delete
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>Delete this agent</TooltipContent>
-                              </Tooltip>
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Button variant="outline">
-                                    <Edit className="mr-1 w-4 h-4" /> Edit
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>Edit this agent</TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </CardFooter>
-                        </Card>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {memoizedPlaceholder}
-              </div>
-            );
-          }}
-        </Droppable>
-      </DragDropContext>
       <div style={{ height: 500 }}>
         <ReactFlow
           nodes={nodes}
