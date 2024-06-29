@@ -16,6 +16,14 @@ const agentTemplates = [
   "Generate a creative story",
 ];
 
+const randomNames = [
+  "Agent Alpha",
+  "Agent Bravo",
+  "Agent Charlie",
+  "Agent Delta",
+  "Agent Echo",
+];
+
 const Index = () => {
   const [agents, setAgents] = useState([]);
   const [newAgentPrompt, setNewAgentPrompt] = useState("");
@@ -23,9 +31,10 @@ const Index = () => {
   const { theme, toggleTheme } = useTheme();
 
   const addAgent = () => {
-    const prompt = newAgentPrompt.trim() || selectedTemplate;
+    const prompt = newAgentPrompt.trim() || selectedTemplate || agentTemplates[Math.floor(Math.random() * agentTemplates.length)];
+    const name = randomNames[Math.floor(Math.random() * randomNames.length)];
     if (prompt) {
-      setAgents([...agents, { prompt }]);
+      setAgents([...agents, { name, prompt }]);
       setNewAgentPrompt("");
       setSelectedTemplate("");
     }
@@ -80,16 +89,13 @@ const Index = () => {
             ))}
           </SelectContent>
         </Select>
-        <Button onClick={addAgent} className="mt-2">
-          <Plus className="mr-2" /> Add Agent
-        </Button>
       </div>
       <Separator className="my-4" />
       <div>
         {agents.map((agent, index) => (
           <Card key={index} className="mb-4">
             <CardHeader>
-              <CardTitle>Agent {index + 1}</CardTitle>
+              <CardTitle>{agent.name}</CardTitle>
             </CardHeader>
             <CardContent>
               <Textarea
@@ -112,8 +118,7 @@ const Index = () => {
                   <TooltipTrigger>
                     <Button variant="outline">
                       <Edit className="mr-2" /> Edit
-                    </Button>
-                  </TooltipTrigger>
+                    </TooltipTrigger>
                   <TooltipContent>Edit this agent</TooltipContent>
                 </Tooltip>
                 <Tooltip>
