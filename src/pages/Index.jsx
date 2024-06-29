@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Trash, Edit, Move, Plus, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/ThemeContext";
+import { Container } from "@/components/ui/container";
 
 const agentTemplates = [
   "Help decide on how to approach homework",
@@ -60,7 +61,7 @@ const Index = () => {
   };
 
   return (
-    <div className="p-4 relative">
+    <Container className="p-4 relative">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl">Manage AI Agents</h1>
         <Button onClick={toggleTheme} variant="outline">
@@ -141,7 +142,7 @@ const Index = () => {
       >
         <Plus className="w-6 h-6" />
       </Button>
-    </div>
+    </Container>
   );
 };
 
